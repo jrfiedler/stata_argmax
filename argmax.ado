@@ -3,6 +3,15 @@ program argmax, rclass
 		[ by(varlist) eval(varlist) ]
 
 	
+	// check that -eval- varlist is not too big for matsize (unlikely)
+	if ("`eval'" != "") {
+		local neval = wordcout("`eval'")
+		if (`neval' + 1 > c(matsize)) {
+			noi di as error "too many variables in -eval- for current matsize"
+			exit 103
+		}
+	}
+	
 	marksample touse
 	
 	// create temporary grouping variable for -by- variables
