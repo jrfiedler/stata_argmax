@@ -5,7 +5,7 @@ program argmax, rclass
 	
 	// check that -eval- varlist is not too big for matsize (unlikely)
 	if ("`eval'" != "") {
-		local neval = wordcout("`eval'")
+		local neval = wordcount("`eval'")
 		if (`neval' + 1 > c(matsize)) {
 			noi di as error "too many variables in -eval- for current matsize"
 			exit 103
@@ -20,12 +20,13 @@ program argmax, rclass
 		qui gen byte `groupvar' = 1
 	}
 	else {
-		qui egen `groupvar' = group(`by')
+		qui egen `groupvar' = group(`by') if `varlist' != . & `touse'
+		qui replace `touse' = 0 if `groupvar' == .
 	}
 	
 	tempname matname
 	
-	mata: input_maxes("`varlist'", "`groupvar'", "`touse'", "`matname'")
+	mata: find_maxes("`varlist'", "`groupvar'", "`touse'", "`matname'")
 	
 	// put in values of -eval- varlist, if any
 	if ("`eval'" != "") {
@@ -51,7 +52,7 @@ program argmax, rclass
 end
 
 mata
-	void input_maxes(string scalar input_name,
+	void find_maxes(string scalar input_name,
 	                string scalar byvar_name,
                     string scalar touse_name,
 	                string scalar matname)
@@ -65,8 +66,9 @@ mata
 		real colvector group_maxes, group_args
 		real colvector seen
 		
-		st_view(input, ., input_name, touse_name)
-		st_view(byvar, ., byvar_name, touse_name)
+		st_view(input, ., input_name)
+		st_view(byvar, ., byvar_name)
+		st_view(touse, ., touse_name)
 	
 		N = length(input)
 		n_groups = colmax(byvar)
@@ -75,6 +77,9 @@ mata
 		seen = J(n_groups, 1, 0)
 		
 		for (i = 1; i <= N; i++) {
+			if (!touse[i]) {
+				continue
+			}
 			group = byvar[i]
 			if (!seen[group]) {
 				group_maxes[group] = input[i]
