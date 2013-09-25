@@ -20,7 +20,7 @@ program argmax, rclass
 		qui gen byte `groupvar' = 1
 	}
 	else {
-		qui egen `groupvar' = group(`by') if `varlist' != . & `touse'
+		qui egen `groupvar' = group(`by') if !missing(`varlist') & `touse'
 		qui replace `touse' = 0 if `groupvar' == .
 	}
 	
