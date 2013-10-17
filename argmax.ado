@@ -26,22 +26,10 @@ program argmax, rclass
 	
 	tempname matname
 	
-	mata: find_maxes("`varlist'", "`groupvar'", "`touse'", "`matname'")
+	mata: find_maxes("`varlist'", "`groupvar'", "`touse'", ///
+	                 "`matname'", "`by'", "`eval'")
 	
-	// put in values of -eval- varlist, if any
-	if ("`eval'" != "") {
-		local nvars = wordcount("`eval'")
-		local nrows = rowsof(`matname')
-		matrix `matname' = (`matname' , J(`nrows', `nvars', .))
-		forv j=1(1)`nvars' {
-			local var = word("`eval'", `j')
-			forv i=1(1)`nrows' {
-				local value = `var'[`matname'[`i',2]]
-				matrix `matname'[`i', `j'+3] = `value'
-			}
-		}
-	}
-	matrix colnames `matname' = group obs_num `varlist' `eval'
+	matrix colnames `matname' = obs_num `varlist' `by' `eval'
 	
 	return clear
 	return matrix values = `matname'
@@ -52,22 +40,38 @@ mata
 	void find_maxes(string scalar input_name,
 	                string scalar byvar_name,
                     string scalar touse_name,
-	                string scalar matname)
+	                string scalar matname,
+	                string scalar original_byvar_names,
+	                string scalar eval_names)
 	{
 		real colvector input
 		real colvector byvar
+		real matrix original_byvars, eval, this_group
 		
-		real scalar i, j, n
+		real scalar i, n, n_rows
 		real scalar N, group, n_groups
-		real colvector group_maxes, n_vals, all_vals, this_group
-		pointer(real matrix) colvector group_vals
+		real colvector group_maxes, n_vals, all_vals
 		real colvector seen
+		pointer(real matrix) colvector group_vals
 		
 		st_view(input, ., input_name)
 		st_view(byvar, ., byvar_name)
 		st_view(touse, ., touse_name)
-	
+		
 		N = length(input)
+		if (original_byvar_names != "") {
+			st_view(original_byvars, ., original_byvar_names)
+		}
+		else {
+			original_byvars = J(N, 0, .)
+		}
+		if (eval_names != "") {
+			st_view(eval, ., eval_names)
+		}
+		else {
+			eval = J(N, 0, .)
+		}
+	
 		n_groups = colmax(byvar)
 		group_maxes = J(n_groups, 1, .)
 		group_vals = J(n_groups, 1, NULL)
@@ -81,17 +85,18 @@ mata
 			group = byvar[i]
 			if (!seen[group]) {
 				group_maxes[group] = input[i]
-				group_vals[group] = &(i, input[i])
+				group_vals[group] = &(i, input[i], original_byvars[i, .], eval[i, .])
 				n_vals[group] = 1
 				seen[group] = 1
 			}
 			else if (input[i] > group_maxes[group]) {
 				group_maxes[group] = input[i]
-				group_vals[group] = &(i, input[i])
+				group_vals[group] = &(i, input[i], original_byvars[i, .], eval[i, .])
 				n_vals[group] = 1
 			}
 			else if (input[i] == group_maxes[group]) {
-				group_vals[group] = &(*(group_vals[group]) \ i, input[i])
+				group_vals[group] = &(*(group_vals[group]) \ 
+				                      i, input[i], original_byvars[i, .], eval[i, .])
 				n_vals[group] = n_vals[group] + 1
 			}
 		}
@@ -103,14 +108,13 @@ mata
 			exit(908)
 		}
 		
-		all_vals = J(sum(n_vals), 3, .)
-		n = 0
+		all_vals = J(sum(n_vals), 2 + cols(original_byvars) + cols(eval), .)
+		n = 1
 		for (i = 1; i <= n_groups; i++) {
-			this_group = *(group_vals[i])
-			for (j = 1; j <= rows(this_group); j++) {
-				n = n + 1
-				all_vals[n, 1..3] = (i, this_group[j, 1..2])
-			}
+			this_group = *group_vals[i]
+			n_rows = rows(this_group)
+			all_vals[(n::(n + n_rows - 1)), .] = this_group
+			n = n + n_rows
 		}
 		
 		st_matrix(matname, all_vals)
