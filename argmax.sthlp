@@ -36,54 +36,54 @@
 	number(s). If {opt by(varlist)} is specified, then {cmd:argmax} does the 
 	above for each group implied by the specified variables.
 	
-	Maximum values, observation numbers, and group numbers are put in
-	return matrix {cmd:r(values)}, along with any {opt eval} variables.
+	Maximum values and observation numbers are put in return matrix 
+	{cmd:r(values)}, along with any {opt by} and {opt eval} variables.
 
 	
 {title:Examples}
 
-      {com}. sysuse auto
+      . sysuse auto
       {txt}(1978 Automobile Data)
       
       {com}. argmax price
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[1,3]
-            group  obs_num    price
-      r1 {res}       1       13    15906
+      {txt}r(values)[1,2]
+          obs_num    price
+      r1 {res}      13    15906
       {reset}
       {com}. argmax price , eval(rep78)
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[1,4]
-            group  obs_num    price    rep78
-      r1 {res}       1       13    15906        3
+      {txt}r(values)[1,3]
+          obs_num    price    rep78
+      r1 {res}      13    15906        3
       {reset}
       {com}. argmax price , by(rep78)
       {res}
       {com}. matrix list r(values)
       {res}
       {txt}r(values)[5,3]
-            group  obs_num    price
-      r1 {res}       1       48     4934
-      {txt}r2 {res}       2       12    14500
-      {txt}r3 {res}       3       13    15906
-      {txt}r4 {res}       4       55     9735
-      {txt}r5 {res}       5       74    11995
+          obs_num    price    rep78
+      r1 {res}      48     4934        1
+      {txt}r2 {res}      12    14500        2
+      {txt}r3 {res}      13    15906        3
+      {txt}r4 {res}      55     9735        4
+      {txt}r5 {res}      74    11995        5
       {reset}
-      {com}. argmax price , by(rep78) eval(rep78 mpg)
+      {com}. argmax price , by(rep78) eval(mpg)
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[5,5]
-            group  obs_num    price    rep78      mpg
-      r1 {res}       1       48     4934        1       18
-      {txt}r2 {res}       2       12    14500        2       14
-      {txt}r3 {res}       3       13    15906        3       21
-      {txt}r4 {res}       4       55     9735        4       25
-      {txt}r5 {res}       5       74    11995        5       17
+      {txt}r(values)[5,4]
+          obs_num    price    rep78      mpg
+      r1 {res}      48     4934        1       18
+      {txt}r2 {res}      12    14500        2       14
+      {txt}r3 {res}      13    15906        3       21
+      {txt}r4 {res}      55     9735        4       25
+      {txt}r5 {res}      74    11995        5       17
       {reset}
 
 
@@ -95,10 +95,10 @@
 {synoptset 15 tabbed}{...}
 {p2col 5 15 19 2: Matrices}{p_end}
 {synopt:{cmd:r(values)}}matrix with columns containing {break}
-						1) group number(s) (or 1, if {opt by(varlist)} option not used), {break}
-						2) obs. number(s), {break}
-						3) {it:varname} value, {break}
-						4..) {opt eval} variable values, if any{p_end}
+						1) obs. number(s), {break}
+						2) {it:varname} value, {break}
+						3..) {opt by} variable values, if any, and 
+						{opt eval} variable values, if any{p_end}
 {p2colreset}{...}
 
 {pstd}

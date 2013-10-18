@@ -36,8 +36,8 @@
 	number(s). If {opt by(varlist)} is specified, then {cmd:argmin} does the 
 	above for each group implied by the specified variables.
 	
-	Minimum values, observation numbers, and group numbers are put in
-	return matrix {cmd:r(values)}, along with any {opt eval} variables.
+	Minimum values and observation numbers are put in return matrix 
+	{cmd:r(values)}, along with any {opt by} and {opt eval} variables.
 
 	
 {title:Examples}
@@ -49,41 +49,41 @@
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[1,3]
-            group  obs_num    price
-      r1 {res}       1       34     3291
+      {txt}r(values)[1,2]
+          obs_num    price
+      r1 {res}      34     3291
       {reset}
       {com}. argmin price , eval(rep78)
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[1,4]
-            group  obs_num    price    rep78
-      r1 {res}       1       34     3291        3
+      {txt}r(values)[1,3]
+          obs_num    price    rep78
+      r1 {res}      34     3291        3
       {reset}
       {com}. argmin price , by(rep78)
       {res}
       {com}. matrix list r(values)
       {res}
       {txt}r(values)[5,3]
-            group  obs_num    price
-      r1 {res}       1       40     4195
-      {txt}r2 {res}       2       18     3667
-      {txt}r3 {res}       3       34     3291
-      {txt}r4 {res}       4       29     3829
-      {txt}r5 {res}       5       68     3748
+          obs_num    price    rep78
+      r1 {res}      40     4195        1
+      {txt}r2 {res}      18     3667        2
+      {txt}r3 {res}      34     3291        3
+      {txt}r4 {res}      29     3829        4
+      {txt}r5 {res}      68     3748        5
       {reset}
-      {com}. argmin price , by(rep78) eval(rep78 mpg)
+      {com}. argmin price , by(rep78) eval(mpg)
       {res}
       {com}. matrix list r(values)
       {res}
-      {txt}r(values)[5,5]
-            group  obs_num    price    rep78      mpg
-      r1 {res}       1       40     4195        1       24
-      {txt}r2 {res}       2       18     3667        2       24
-      {txt}r3 {res}       3       34     3291        3       20
-      {txt}r4 {res}       4       29     3829        4       22
-      {txt}r5 {res}       5       68     3748        5       31
+      {txt}r(values)[5,4]
+          obs_num    price    rep78      mpg
+      r1 {res}      40     4195        1       24
+      {txt}r2 {res}      18     3667        2       24
+      {txt}r3 {res}      34     3291        3       20
+      {txt}r4 {res}      29     3829        4       22
+      {txt}r5 {res}      68     3748        5       31
       {reset}
 
 
@@ -95,10 +95,10 @@
 {synoptset 15 tabbed}{...}
 {p2col 5 15 19 2: Matrices}{p_end}
 {synopt:{cmd:r(values)}}matrix with columns containing {break}
-						1) group number(s) (or 1, if {opt by(varlist)} option not used), {break}
-						2) obs. number(s), {break}
-						3) {it:varname} value, {break}
-						4..) {opt eval} variable values, if any{p_end}
+						1) obs. number(s), {break}
+						2) {it:varname} value, {break}
+						3..) {opt by} variable values, if any, and 
+						{opt eval} variable values, if any{p_end}
 {p2colreset}{...}
 
 {pstd}
