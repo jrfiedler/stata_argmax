@@ -29,12 +29,14 @@
 
 {phang}
 {cmd:argmax} finds the observation number of the maximum value of the given 
-	numeric variable {it:varname}. If there is a tie for maximum value, then 
+	numeric variable {it:varname}. Missing values are excluded. If there is a 
+	tie for maximum value, then 
 	{cmd:argmax} finds all observation numbers at which the maximun value is 
 	obtained. If the option {opt eval(varlist)} is specified, then {cmd:argmax} 
 	also finds the values of these variables at the calculated observation 
 	number(s). If {opt by(varlist)} is specified, then {cmd:argmax} does the 
-	above for each group implied by the specified variables.
+	above for each group implied by the non-missing values of the specified 
+	variables. 
 	
 	Maximum values and observation numbers are put in return matrix 
 	{cmd:r(values)}, along with any {opt by} and {opt eval} variables.

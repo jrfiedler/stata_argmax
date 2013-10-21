@@ -29,12 +29,14 @@
 
 {phang}
 {cmd:argmin} finds the observation number of the minimum value of the given 
-	numeric variable {it:varname}. If there is a tie for minimum value, then 
+	numeric variable {it:varname}. Missing values are excluded. If there is a 
+	tie for maximum value, then 
 	{cmd:argmin} finds all observation numbers at which the minimun value is 
 	obtained. If the option {opt eval(varlist)} is specified, then {cmd:argmin} 
 	also finds the values of these variables at the calculated observation 
 	number(s). If {opt by(varlist)} is specified, then {cmd:argmin} does the 
-	above for each group implied by the specified variables.
+	above for each group implied by the the non-missing values of the specified 
+	variables.
 	
 	Minimum values and observation numbers are put in return matrix 
 	{cmd:r(values)}, along with any {opt by} and {opt eval} variables.
