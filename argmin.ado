@@ -13,6 +13,7 @@ program argmin, rclass
 	}
 	
 	marksample touse
+	qui replace `touse' = 0 if missing(`varlist')
 	
 	// create temporary grouping variable for -by- variables
 	tempvar groupvar
@@ -44,7 +45,7 @@ program argmin, rclass
 			bynumeric = "`by'"
 		}
 		// create grouping variable
-		qui egen `groupvar' = group(`by') if !missing(`varlist') & `touse'
+		qui egen `groupvar' = group(`by') if `touse'
 		qui replace `touse' = 0 if `groupvar' == .
 	}
 	
