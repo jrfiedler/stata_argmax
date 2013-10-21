@@ -39,7 +39,10 @@
 	variables.
 	
 	Minimum values and observation numbers are put in return matrix 
-	{cmd:r(values)}, along with any {opt by} and {opt eval} variables.
+	{cmd:r(values)}, along with any {opt by} and {opt eval} variables. If
+	any of the {opt by} variables are string, their values will be replaced
+	by integer values in the {cmd:r(values)} matrix. If any of the {opt eval}
+	variables are string, their values will be . in the {cmd:r(values)} matrix.
 
 	
 {title:Examples}
