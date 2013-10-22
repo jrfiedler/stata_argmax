@@ -29,15 +29,14 @@
 
 {phang}
 {cmd:argmax} finds the observation number of the maximum value of the given 
-	numeric variable {it:varname}. Missing values are excluded. If there is a 
-	tie for maximum value, then 
-	{cmd:argmax} finds all observation numbers at which the maximun value is 
-	obtained. If the option {opt eval(varlist)} is specified, then {cmd:argmax} 
-	also finds the values of these variables at the calculated observation 
-	number(s). If {opt by(varlist)} is specified, then {cmd:argmax} does the 
-	above for each group implied by the non-missing values of the specified 
-	variables. 
+	numeric variable {it:varname}. Missing values are excluded. If the maximum 
+	value occurs in multiple observations, then {cmd:argmax} finds all such 
+	observations. If the option {opt eval(varlist)} is specified, then {cmd:argmax} 
+	also returns the values of these variables at the calculated observation 
+	numbers. If {opt by(varlist)} is specified, then {cmd:argmax} does the 
+	above for each group implied by these variables (excluding missing values).
 	
+{pmore}
 	Maximum values and observation numbers are put in return matrix 
 	{cmd:r(values)}, along with any {opt by} and {opt eval} variables. If
 	any of the {opt by} variables are string, their values will be replaced
@@ -90,6 +89,32 @@
       {txt}r4 {res}      55     9735        4       25
       {txt}r5 {res}      74    11995        5       17
       {reset}
+	  
+{pstd}
+If a variable in the {opt by} option is a string variable, then the values
+that show up in the {cmd:r(values)} matrix are integer values corresponding
+to the string's position when sorted.
+	  
+      {com}. gen brand = word(make, 1)
+      
+      . argmax price if !foreign , by(brand)
+      {res}
+      {com}. matrix list r(values)
+      {res}
+      {txt}r(values)[11,3]
+           obs_num    price    brand
+       r1 {res}       2     4749        1
+      {txt} r2 {res}       9    10372        4
+      {txt} r3 {res}      13    15906        5
+      {txt} r4 {res}      15     5705        6
+      {txt} r5 {res}      23     6342        8
+      {txt} r6 {res}      24     4389       10
+      {txt} r7 {res}      27    13594       12
+      {txt} r8 {res}      33     6303       14
+      {txt} r9 {res}      41    10371       15
+      {txt}r10 {res}      45     6486       17
+      {txt}r11 {res}      47     5798       18
+      {reset}
 
 
 {title:Stored results}
@@ -108,8 +133,8 @@
 
 {pstd}
 The number of rows in {cmd:r(values)} is determined by the number of tied maximun
-values in each group implied by {opt by(varlist)}, or just the number of tied
-maximun values if {opt by(varlist)} is not used.
+values in each group implied by {opt by(varlist)} (excluding missing values), or 
+just the number of tied maximun values if {opt by(varlist)} is not used.
 
 {title:Author}
 

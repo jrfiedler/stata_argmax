@@ -29,15 +29,14 @@
 
 {phang}
 {cmd:argmin} finds the observation number of the minimum value of the given 
-	numeric variable {it:varname}. Missing values are excluded. If there is a 
-	tie for maximum value, then 
-	{cmd:argmin} finds all observation numbers at which the minimun value is 
-	obtained. If the option {opt eval(varlist)} is specified, then {cmd:argmin} 
-	also finds the values of these variables at the calculated observation 
-	number(s). If {opt by(varlist)} is specified, then {cmd:argmin} does the 
-	above for each group implied by the the non-missing values of the specified 
-	variables.
+	numeric variable {it:varname}. Missing values are excluded. If the minimum 
+	value occurs in multiple observations, then {cmd:argmin} finds all such 
+	observations. If the option {opt eval(varlist)} is specified, then {cmd:argmin} 
+	also returns the values of these variables at the calculated observation 
+	numbers. If {opt by(varlist)} is specified, then {cmd:argmin} does the 
+	above for each group implied by these variables (excluding missing values).
 	
+{pmore}
 	Minimum values and observation numbers are put in return matrix 
 	{cmd:r(values)}, along with any {opt by} and {opt eval} variables. If
 	any of the {opt by} variables are string, their values will be replaced
@@ -90,6 +89,32 @@
       {txt}r4 {res}      29     3829        4       22
       {txt}r5 {res}      68     3748        5       31
       {reset}
+	  
+{pstd}
+If a variable in the {opt by} option is a string variable, then the values
+that show up in the {cmd:r(values)} matrix are integer values corresponding
+to the string's position when sorted.
+	  
+      {com}. gen brand = word(make, 1)
+      
+      . argmin price if !foreign , by(brand)
+      {res}
+      {com}. matrix list r(values)
+      {res}
+      {txt}r(values)[11,3]
+           obs_num    price    brand
+       r1 {res}       3     3799        1
+      {txt} r2 {res}      10     4082        4
+      {txt} r3 {res}      11    11385        5
+      {txt} r4 {res}      14     3299        6
+      {txt} r5 {res}      20     3984        8
+      {txt} r6 {res}      25     4187       10
+      {txt} r7 {res}      26    11497       12
+      {txt} r8 {res}      34     3291       14
+      {txt} r9 {res}      39     4181       15
+      {txt}r10 {res}      46     4060       17
+      {txt}r11 {res}      52     4172       18
+      {reset}
 
 
 {title:Stored results}
@@ -108,8 +133,8 @@
 
 {pstd}
 The number of rows in {cmd:r(values)} is determined by the number of tied minimun
-values in each group implied by {opt by(varlist)}, or just the number of tied
-minimun values if {opt by(varlist)} is not used.
+values in each group implied by {opt by(varlist)} (excluding missing values), or 
+just the number of tied minimun values if {opt by(varlist)} is not used.
 
 {title:Author}
 
