@@ -73,7 +73,7 @@ mata
 		real colvector group
 		real matrix byvars, eval, this_group
 		
-		real scalar i, n, n_rows
+		real scalar i, j, n, n_rows, obs
 		real scalar N, group_num, n_groups
 		real colvector group_mins, n_vals, all_vals
 		real colvector seen
@@ -110,18 +110,18 @@ mata
 			group_num = group[i]
 			if (!seen[group_num]) {
 				group_mins[group_num] = input[i]
-				group_vals[group_num] = &(i, input[i], byvars[i, .], eval[i, .])
+				group_vals[group_num] = &(i, input[i])
 				n_vals[group_num] = 1
 				seen[group_num] = 1
 			}
 			else if (input[i] < group_mins[group_num]) {
 				group_mins[group_num] = input[i]
-				group_vals[group_num] = &(i, input[i], byvars[i, .], eval[i, .])
+				group_vals[group_num] = &(i, input[i])
 				n_vals[group_num] = 1
 			}
 			else if (input[i] == group_mins[group_num]) {
 				group_vals[group_num] = &(*(group_vals[group_num]) \ 
-				                      i, input[i], byvars[i, .], eval[i, .])
+				                          i, input[i])
 				n_vals[group_num] = n_vals[group_num] + 1
 			}
 		}
@@ -134,11 +134,16 @@ mata
 		}
 		
 		all_vals = J(sum(n_vals), 2 + cols(byvars) + cols(eval), .)
-		n = 1
+		n = 0
 		for (i = 1; i <= n_groups; i++) {
 			this_group = *group_vals[i]
 			n_rows = rows(this_group)
-			all_vals[(n::(n + n_rows - 1)), .] = this_group
+			for (j = 1; j <= n_rows; j++) {
+				obs = this_group[j, 1]
+				all_vals[n + j, .] = (this_group[j,.], 
+				                      byvars[obs, .], 
+				                      eval[obs, .])
+			}
 			n = n + n_rows
 		}
 		
