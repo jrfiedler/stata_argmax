@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.0 09oct2013}{...}
+{* *! version 1.0.0 15apr2014}{...}
 
 {title:Title}
 
@@ -10,15 +10,16 @@
 {p 8 17 2}
 {cmdab:argmin}
 {varname}
+{ifin}
 [ {cmd:,} {it:options} ]
 
 {synoptset 20}{...}
 {synopthdr}
 {synoptline}
-{synopt:{opth eval(varlist)}}specify variables to evaluate at
+{synopt:{opth eval(varlist)}}evaluate specified variables at
 	returned observation number(s){p_end}
 
-{synopt:{opth by(varlist)}}specify variables to group by when finding min value; 
+{synopt:{opth by(varlist)}}group by specified variables when finding min value; 
 	{cmd:argmin} will find the min value's observation number (or {it:numbers} 
 	if there are ties) per each group implied by {it:varlist}{p_end}
 {synoptline}
@@ -41,7 +42,8 @@
 	{cmd:r(values)}, along with any {opt by} and {opt eval} variables. If
 	any of the {opt by} variables are string, their values will be replaced
 	by integer values in the {cmd:r(values)} matrix. If any of the {opt eval}
-	variables are string, their values will be . in the {cmd:r(values)} matrix.
+	variables are string, their values will be the missing value "." in the 
+	{cmd:r(values)} matrix.
 
 	
 {title:Examples}
@@ -135,6 +137,12 @@ to the string's position when sorted.
 The number of rows in {cmd:r(values)} is determined by the number of tied minimun
 values in each group implied by {opt by(varlist)} (excluding missing values), or 
 just the number of tied minimun values if {opt by(varlist)} is not used.
+
+
+{title:See also}
+
+{help argmax:argmax}
+
 
 {title:Author}
 

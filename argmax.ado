@@ -1,4 +1,7 @@
+*! version 1.0.0  15apr2014
 program argmax, rclass
+	version 9
+
 	syntax varname(numeric) [if] [in] , ///
 		[ by(varlist) eval(varlist) ]
 
